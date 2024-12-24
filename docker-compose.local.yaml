@@ -9,7 +9,7 @@ services:
     ports:
       - "${STORE_DB_PORT:-5432}:5432"
     environment:
-      - CREATE_DATABASES=store-admin,store-products
+      - CREATE_DATABASES=keycloak,store-admin,store-products
       - POSTGRES_USER=${STORE_DB_USER:-postgres}
       - POSTGRES_PASSWORD=${STORE_DB_PASSWORD:-secret}
     command: postgres -c max_prepared_transactions=100
@@ -49,9 +49,45 @@ services:
     networks:
       - store-network
 
+  keycloak:
+    container_name: store-keycloak
+    image: quay.io/keycloak/keycloak:26.0.7
+    restart: unless-stopped
+    command: "-v start-dev --import-realm"
+    ports:
+      - "${STORE_KEYCLOAK_PORT:-8082}:9080"
+    volumes:
+      - store_keycloak:/opt/keycloak/data/import
+#      - ./.env/keycloak/import:/opt/keycloak/data/import
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://store-db:${STORE_DB_PORT:-5432}/keycloak
+      KC_DB_USERNAME: ${STORE_DB_USER:-postgres}
+      KC_DB_PASSWORD: ${STORE_DB_PASSWORD:-secret}
+
+      KC_HTTP_PORT: 9080
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KC_LOG_LEVEL: info
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [ "CMD-SHELL", "{ exec 3<>/dev/tcp/localhost/9080 && echo -e \"GET /health/ready HTTP/1.1\nhost: localhost:9080\n\" >&3 && timeout --preserve-status 1 cat <&3 | grep -m 1 -q 'status.*UP'; }" ]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 5
+    networks:
+      - store-network
+
 volumes:
   store_pgdata:
   store_pgadmin_data:
+  store_keycloak:
 
 networks:
   store-network:

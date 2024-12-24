@@ -20,7 +20,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/products/{product_id:\\d+}")
+@RequestMapping("/api/products/{product_id:\\d+}")
 @ParametersAreNonnullByDefault
 public class ProductRestController {
 

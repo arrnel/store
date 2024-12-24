@@ -19,6 +19,7 @@ dependencies {
     implementation "org.flywaydb:flyway-database-postgresql"
     implementation "org.apache.commons:commons-lang3:${project.ext.commonsVersion}"
     implementation "com.github.spotbugs:spotbugs-annotations:${project.ext.spotBugsAnnotationsVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     compileOnly "org.projectlombok:lombok"
     developmentOnly "org.springframework.boot:spring-boot-devtools"
     annotationProcessor "org.projectlombok:lombok"

@@ -9,11 +9,28 @@ spring:
       accept-case-insensitive-enums: true
   mvc:
     log-request-details: true
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:${STORE_KEYCLOAK_PORT:8082}/realms/store
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: admin-app
+            client-secret: PUZuiooo0d4vI4K1vUNwrw0o3IOqT7Qo
+            scope:
+              - openid
+              - view_products
+              - edit_products
+              - microprofile-jwt
 
 store:
   services:
     products:
       uri: http://localhost:${STORE_PRODUCTS_PORT:8081}
+      registration-id: keycloak
 
 logging:
   file:
