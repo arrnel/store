@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Список товаров &ndash; Arrnel</title>
+    <style>
+
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap');
+
+        :root {
+
+            /* Основные цвета */
+            --color-light: rgba(249, 249, 249, 1);
+            --color-light-border: rgba(221, 221, 221, 1);
+            --color-dark: rgba(36, 36, 36, 1);
+            --color-dark-shadow: rgba(36, 36, 36, 0.1);
+            --color-accent: rgba(0, 123, 255, 1);
+            --color-accent-hover: rgba(0, 123, 255, 0.1);
+
+            /* Дополнительные цвета */
+            --color-add: rgba(46, 168, 27, 1);
+            --color-edit: rgba(0, 123, 255, 1);
+            --color-remove: rgba(217, 83, 79, 1);
+
+            /* Границы и отступы */
+            --border-default: 1px solid var(--color-light-border);
+            --border-radius-big: 10px;
+            --border-radius-min: 5px;
+            --indent-min: 10px;
+            --indent-max: 20px;
+
+            /* Тени и прозрачности */
+            --box-shadow: 0 var(--indent-min) var(--indent-max) var(--color-dark-shadow);
+            --hover-opacity: 0.9;
+
+            /* Шрифт */
+            --common-font: Montserrat, Arial, sans-serif;
+            --font-size-h1: 1.8rem;
+            --font-size-h2: 1.5rem;
+            --font-size-h3: 1.2rem;
+            --font-size-text: 1rem;
+
+            --operation-transition: background-color 0.3s ease;
+
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Montserrat, sans-serif;
+            font-size: var(--font-size-text);
+        }
+
+        body {
+            background-color: var(--color-dark);
+            color: var(--color-dark);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: var(--indent-max);
+        }
+
+        /* Рамки */
+        .add-button-wrapper button,
+        .filter input,
+        .filter button,
+        .operations form button,
+        .pagination li a {
+            border-radius: var(--border-radius-min);
+        }
+
+        .page-container,
+        .filter,
+        .table-container,
+        .styled-table {
+            border-radius: var(--border-radius-big);
+        }
+
+        .page-container {
+            background-color: var(--color-light);
+            padding: var(--indent-max);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: var(--font-size-h1);
+        }
+
+        h2 {
+            font-size: var(--font-size-h2);
+        }
+
+        h3 {
+            font-size: var(--font-size-h3);
+        }
+
+        .page-title {
+            color: var(--color-dark);
+            text-align: center;
+            margin-bottom: var(--indent-max);
+        }
+
+        .add-button-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            margin-bottom: var(--indent-max);
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: var(--indent-max);
+            width: 100%;
+        }
+
+        .filter {
+            background-color: var(--color-light);
+            padding: var(--indent-max);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 300px;
+            max-height: 320px;
+        }
+
+        .filter h2 {
+            color: var(--color-dark);
+            margin-bottom: var(--indent-min);
+        }
+
+        .filter label {
+            display: block;
+            margin-bottom: var(--indent-min);
+            color: var(--color-dark);
+        }
+
+        .filter input {
+            width: 100%;
+            padding: var(--indent-min);
+            margin-bottom: var(--indent-min);
+            border: var(--border-default);
+        }
+
+        .prices_filter_wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--indent-min);
+            margin-bottom: var(--indent-max);
+        }
+
+        .prices_filter_wrapper label {
+            color: var(--color-dark);
+        }
+
+        .filter button {
+            width: 100%;
+            background-color: var(--color-accent);
+            color: var(--color-light);
+            border: none;
+            padding: var(--indent-min);
+            cursor: pointer;
+            transition: var(--operation-transition);
+        }
+
+        .filter button:hover {
+            background-color: var(--color-accent);
+        }
+
+        .table-container {
+            flex: 1;
+            background-color: var(--color-light);
+            padding: var(--indent-max);
+            box-shadow: var(--box-shadow);
+        }
+
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+        }
+
+        .styled-table th, .styled-table td {
+            border: var(--border-default);
+            padding: var(--indent-min);
+            text-align: left;
+        }
+
+        .styled-table th {
+            background-color: var(--color-accent);
+            color: var(--color-light);
+        }
+
+        .styled-table tr:nth-child(even) {
+            background-color: var(--color-light);
+        }
+
+        .styled-table tr:hover {
+            background-color: var(--color-accent-hover);
+        }
+
+        .operations {
+            display: inline-block;
+            margin-right: var(--indent-min);
+        }
+
+        .operation {
+            height: 100%;
+            max-height: 100px;
+            padding: var(--indent-min);
+            color: var(--color-light);
+            border: none;
+            cursor: pointer;
+            transition: var(--operation-transition);
+        }
+
+        .add_product {
+            background-color: var(--color-add);
+        }
+
+        .edit_product {
+            background-color: var(--color-edit);
+        }
+
+        .delete_product {
+            background-color: var(--color-remove);
+        }
+
+        .no-data-message {
+            text-align: center;
+            color: var(--color-dark);
+        }
+
+        .pagination_wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: var(--indent-max);
+        }
+
+        .pagination {
+            list-style: none;
+            display: flex;
+            gap: var(--indent-min);
+        }
+
+        .pagination li {
+            display: inline;
+        }
+
+        .pagination li a {
+            text-decoration: none;
+            padding: var(--indent-min);
+            color: var(--color-accent);
+            border: var(--border-default);
+            transition: var(--operation-transition);
+        }
+
+        .pagination li a:hover {
+            background-color: var(--color-accent);
+            color: var(--color-light);
+        }
+
+        .pagination .active a {
+            background-color: var(--color-accent);
+            color: var(--color-light);
+            cursor: default;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="page-container">
+    <h1 class="page-title">Список товаров</h1>
+    <div class="add-button-wrapper">
+        <a href="/products/add">
+            <button class="operation add_product">Добавить товар</button>
+        </a>
+    </div>
+    <div class="content-wrapper">
+        <div class="filter-wrapper">
+            <div class="filter" data-th-if="${!products.data.isEmpty()}">
+                <h2>Фильтрация</h2>
+                <form method="get" action="/products" onsubmit="validateForm(this)">
+                    <label>
+                        Наименование:
+                        <input id="filter-title"
+                               name="title"
+                               type="text"
+                               minlength="3"
+                               maxlength="50"
+                               data-th-value="${productsFilter.title}">
+                    </label>
+                    <label>Цена:</label>
+                    <div class="prices_filter_wrapper">
+                        <label for="min_price">от:</label>
+                        <input id="min_price"
+                               name="min_price"
+                               type="number"
+                               min="0.0"
+                               step="0.01"
+                               data-th-value="${productsFilter.minPrice}">
+                        <label for="max_price">до:</label>
+                        <input id="max_price"
+                               name="max_price"
+                               type="number"
+                               min="0.0"
+                               step="0.01"
+                               data-th-value="${productsFilter.maxPrice}">
+                    </div>
+                    <button class="operation" type="submit">Искать</button>
+                </form>
+            </div>
+        </div>
+        <div class="table-container">
+            <h2 data-th-if="${products.data.isEmpty()}" class="no-data-message">
+                Товары отсутствуют. Добавьте первый товар!
+            </h2>
+            <table data-th-if="${!products.data.isEmpty()}" class="styled-table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Товар</th>
+                    <th>Операции</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-th-each="product : ${products.data}">
+                    <td data-th-text="${product.id}"></td>
+                    <td>
+                        <a data-th-href="@{/products/{productId}(productId=${product.id})}"
+                           data-th-text="${product.title}"></a>
+                    </td>
+                    <td>
+                        <div class="operations">
+                            <form method="get"
+                                  data-th-action="@{/products/{productId}/edit(productId=${product.id})}">
+                                <button type="submit" class="operation edit_product">Редактировать</button>
+                            </form>
+                        </div>
+
+                        <div class="operations">
+                            <form method="post"
+                                  data-th-action="@{/products/{productId}/delete(productId=${product.id})}">
+                                <button type="submit" class="operation delete_product">Удалить</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="pagination_wrapper" data-th-if="${products.totalPages > 1}">
+                <ul class="pagination">
+                    <li data-th-if="${products.currentPage > 0}">
+                        <a data-th-href=
+                                   "@{/products(
+                                   title=${productsFilter.title},
+                                   min_price=${productsFilter.minPrice},
+                                   max_price=${productsFilter.maxPrice},
+                                   page=${products.currentPage - 1 > 0} ? ${products.currentPage - 1} : null)}">
+                            &laquo; Предыдущая
+                        </a>
+                    </li>
+                    <li data-th-each="i : ${#numbers.sequence(1, products.totalPages)}"
+                        data-th-class="${i == products.currentPage + 1} ? 'active' : ''">
+                        <a data-th-href=
+                                   "@{/products(
+                                   title=${productsFilter.title},
+                                   min_price=${productsFilter.minPrice},
+                                   max_price=${productsFilter.maxPrice},
+                                   page=${i - 1 > 0} ? ${i - 1} : null)}"
+                           data-th-text="${i}"></a>
+                    </li>
+                    <li data-th-if="${products.currentPage < products.totalPages - 1}">
+                        <a data-th-href=
+                                   "@{/products(
+                                   title=${productsFilter.title},
+                                   min_price=${productsFilter.minPrice},
+                                   max_price=${productsFilter.maxPrice},
+                                   page=${products.currentPage + 1 > 0} ? ${products.currentPage + 1} : null)}">
+                            Следующая &raquo;
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const paginationLinks = document.querySelectorAll(".pagination a");
+
+        paginationLinks.forEach(link => {
+            link.addEventListener("click", function (event) {
+                event.preventDefault();
+
+                const url = new URL(this.href, window.location.origin);
+                const params = new URLSearchParams(url.search);
+
+                // Удаляем параметры с пустыми значениями
+                for (const [key, value] of params.entries()) {
+                    if (!value) {
+                        params.delete(key);
+                    }
+                }
+
+                // Удаляем `page`, если он равен начальному значению
+                if (params.get("page") === "0") {
+                    params.delete("page");
+                }
+
+                // Формируем новый URL с правильным порядком параметров
+                const orderedParams = new URLSearchParams();
+                if (params.has("title")) orderedParams.set("title", params.get("title"));
+                if (params.has("min_price")) orderedParams.set("min_price", params.get("min_price"));
+                if (params.has("max_price")) orderedParams.set("max_price", params.get("max_price"));
+                if (params.has("page")) orderedParams.set("page", params.get("page"));
+
+                url.search = orderedParams.toString();
+
+                // Выполняем переход на новый URL
+                window.location.href = url.toString();
+            });
+        });
+    });
+
+    function validateForm(form) {
+        const inputs = form.querySelectorAll("input");
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                input.removeAttribute("name");
+            }
+        });
+    }
+
+</script>
+</html>
