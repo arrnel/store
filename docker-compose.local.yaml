@@ -1,0 +1,58 @@
+name: store-local
+
+services:
+
+  postgres:
+    container_name: store-db
+    image: postgres:16.4
+    restart: unless-stopped
+    ports:
+      - "${STORE_DB_PORT:-5432}:5432"
+    environment:
+      - CREATE_DATABASES=store-admin,store-products
+      - POSTGRES_USER=${STORE_DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${STORE_DB_PASSWORD:-secret}
+    command: postgres -c max_prepared_transactions=100
+    volumes:
+      - store_pgdata:/var/lib/postgresql/data
+      - ./.env/postgres/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${STORE_DB_USER:-postgres}", "-d", "postgres" ]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+    networks:
+      - store-network
+
+  pgadmin:
+    container_name: store-pgadmin
+    image: dpage/pgadmin4:8.11.0
+    restart: unless-stopped
+    ports:
+      - "${STORE_PGADMIN_PORT:-5433}:80"
+    volumes:
+      - store_pgadmin_data:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${STORE_PGADMIN_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${STORE_PGADMIN_PASSWORD:-12345}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:${STORE_PGADMIN_PORT:-5433}/misc/ping || exit -1
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - store-network
+
+volumes:
+  store_pgdata:
+  store_pgadmin_data:
+
+networks:
+  store-network:
+    driver: bridge

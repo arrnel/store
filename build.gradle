@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+allprojects {
+
+    apply plugin: 'java'
+
+    group = 'com.arrnel'
+    version = '1.0-SNAPSHOT'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+}
+
+subprojects {
+
+    repositories {
+        mavenCentral()
+    }
+
+    ext {
+        commonsVersion = '3.17.0'
+        spotBugsAnnotationsVersion = '4.8.6'
+    }
+
+}
