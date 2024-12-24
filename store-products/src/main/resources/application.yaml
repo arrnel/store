@@ -1,0 +1,40 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: store-products
+  datasource:
+    hikari:
+      connection-timeout: 20000
+      minimum-idle: 10
+      maximum-pool-size: 30
+      idle-timeout: 10000
+      max-lifetime: 1000
+      auto-commit: true
+    url: jdbc:postgresql://localhost:${STORE_DB_PORT:5432}/store-products
+    username: ${STORE_DB_USERNAME:postgres}
+    password: ${STORE_DB_PASSWORD:secret}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    open-in-view: false
+  mvc:
+    log-request-details: true
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+
+logging:
+  file:
+    path: ./.logs/store-products
+  level:
+    root: INFO
+    org.springframework.kafka: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+    org.springframework.web.cors: INFO
+    org.apache.catalina.filters.RequestDumperFilter: INFO
+    org.springframework.boot.autoconfigure: INFO
