@@ -1,0 +1,29 @@
+server:
+  port: ${STORE_ADMIN_PORT:8080}
+
+spring:
+  application:
+    name: store-admin
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+  mvc:
+    log-request-details: true
+
+store:
+  services:
+    products:
+      uri: http://localhost:${STORE_PRODUCTS_PORT:8081}
+
+logging:
+  file:
+    path: ./.logs/store-admin
+  level:
+    root: INFO
+    org.springframework.kafka: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+    org.springframework.web.cors: INFO
+    org.apache.catalina.filters.RequestDumperFilter: INFO
+    org.springframework.boot.autoconfigure: INFO
